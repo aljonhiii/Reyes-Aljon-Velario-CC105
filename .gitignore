@@ -1,0 +1,30 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+venv/
+env/
+.env
+
+# Databases
+db.sqlite3
+
+# Static and Media
+staticfiles/
+media/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Optional: Large data files and Notebooks
+# (Keep these in your repo if you want them on GitHub, 
+# but they aren't needed for the Render web service)
+# *.csv
+# *.ipynb
