@@ -1,50 +1,183 @@
 {% extends 'checker/index.html' %}
 
-{% block title %}Prediction Result — PhoneCheck{% endblock %}
+{% block title %}Prediction Result — PhoneCheck — Aljon Velario Reyes{% endblock %}
+
+{% block extra_css %}
+<!-- Extracting inline styles to separate block for better maintainability -->
+<style>
+  /* ── Main Component Classes ── */
+  .result-wrapper {
+    max-width: 700px;
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .result-card {
+    text-align: center;
+    background: var(--paper); /* Assumes variable from index.html */
+    border: 1px solid var(--border-ink); /* Assumes variable from index.html */
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  }
+
+  .result-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    color: var(--ink); /* Assumes variable from index.html */
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  /* ── Score Display & Dynamic Color Logic ── */
+  .score-display {
+    font-family: 'Syne', sans-serif;
+    font-size: 5rem;
+    font-weight: 800;
+    margin: 1.5rem 0;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    transition: color 0.3s ease; /* Smooth transition if color changes */
+  }
+
+  /* Mapping the risk_band data to explicit CSS color classes */
+  .score-display.risk-high { color: #c0392b; }      /* Dark Red */
+  .score-display.risk-moderate { color: #f39c12; }  /* Amber */
+  .score-display.risk-low { color: #27ae60; }       /* Success Green */
+
+  /* ── Dynamic Description & Grid ── */
+  .result-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.1rem;
+    padding: 12px 24px;
+    margin-bottom: 1.5rem;
+    display: inline-block; /* Improved text alignment rendering */
+    border-radius: 4px; /* Added slight rounding for a fixed design */
+  }
+
+  /* Using existing CSS structure for badge colors */
+  /* Assuming index.html styles .badge-red and .badge-green appropriately */
+
+  .result-desc {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--muted-ink); /* Assumes variable from index.html */
+    margin-bottom: 2rem;
+    max-width: 550px;
+    margin-left: auto; /* Required for proper centering with max-width */
+    margin-right: auto;
+  }
+
+  .result-divider {
+    border: none;
+    border-top: 1px solid var(--border-ink);
+    margin: 2.5rem 0;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    text-align: left;
+  }
+
+  .metric-card {
+    background: var(--paper2); /* Assumes variable from index.html */
+    padding: 1.5rem 2rem;
+    border: 1px solid var(--border-ink);
+  }
+
+  .metric-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted-ink);
+    border-left: 3px solid var(--red); /* Styling consistent with original tags */
+    padding-left: 0.75rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .metric-value {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--ink);
+  }
+
+  /* ── Action Button ── */
+  .action-wrapper {
+    margin-top: 3.5rem;
+  }
+
+  .btn-check-another {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--paper2);
+    color: var(--ink);
+    border: 1px solid var(--border-ink);
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background 0.2s, box-shadow 0.2s; /* Smooth fixed hover */
+    display: inline-block; /* Fix for padding issues on anchors */
+  }
+
+  /* Fixed hover design using CSS state rather than JavaScript attributes */
+  .btn-check-another:hover {
+    background: #f0f0f0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    color: var(--ink); /* Ensure text remains readable */
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="top-rule"></div>
 
-<div class="container fade-up" style="max-width: 700px; margin-top: 2rem; margin-bottom: 3rem;">
-  <div class="card" style="text-align: center; background: var(--paper); border: 1px solid var(--border-ink); padding: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+<div class="container fade-up result-wrapper">
+  <div class="card result-card">
     
-    <h2 style="font-family: 'Syne', sans-serif; font-weight: 700; color: var(--ink); margin-bottom: 0.5rem; letter-spacing: -0.02em;">Your Addiction Risk Score</h2>
+    <h2 class="result-title">Your Addiction Risk Score</h2>
 
-    <!-- Very Large Conditional Score -->
-    <div style="font-family: 'Syne', sans-serif; font-size: 5rem; font-weight: 800; color: {% if risk_band == 'high' %}#c0392b{% elif risk_band == 'moderate' %}#f39c12{% else %}#27ae60{% endif %}; margin: 1.5rem 0; line-height: 1; letter-spacing: -0.04em;">
+    <!-- Information is dynamic. Color logic is now driven cleanly by the data -->
+    <!-- We rely on risk_band being high, moderate, or low from the view -->
+    <div class="score-display risk-{{ risk_band }}">
       {{ risk_score|floatformat:1 }}%
     </div>
 
-    <!-- Conditional Badge and Description -->
+    <!-- Conditional rendering remains dynamic based on 'addicted' boolean -->
     {% if addicted %}
-      <div class="badge badge-red" style="font-family: 'DM Mono', monospace; font-size: 1.1rem; padding: 12px 24px; margin-bottom: 1.5rem; background-color: #c0392b; color: white;">High Risk of Smartphone Addiction</div>
-      <p style="font-size: 0.95rem; line-height: 1.7; color: var(--muted-ink); margin-bottom: 2rem; max-width: 550px; margin-left: auto; margin-right: auto;">
+      <div class="badge badge-red result-badge">High Risk of Smartphone Addiction</div>
+      <p class="result-desc">
         Your usage patterns closely match those of users with clinically identified smartphone addiction. Consider reducing your screen time and evaluating your digital habits.
       </p>
     {% else %}
-      <div class="badge badge-green" style="font-family: 'DM Mono', monospace; font-size: 1.1rem; padding: 12px 24px; margin-bottom: 1.5rem; background-color: #27ae60; color: white;">Healthy Digital Habits</div>
-      <p style="font-size: 0.95rem; line-height: 1.7; color: var(--muted-ink); margin-bottom: 2rem; max-width: 550px; margin-left: auto; margin-right: auto;">
+      <div class="badge badge-green result-badge">Healthy Digital Habits</div>
+      <p class="result-desc">
         Your usage patterns fall within a healthy range compared to our dataset.
       </p>
     {% endif %}
 
-    <hr style="border: none; border-top: 1px solid var(--border-ink); margin: 2.5rem 0;">
+    <hr class="result-divider">
 
-    <!-- Metrics Grid -->
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; text-align: left;">
-      <div class="card" style="background: var(--paper2); padding: 1.5rem 2rem; border: 1px solid var(--border-ink);">
-        <div class="tag" style="font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted-ink); border-left: 3px solid var(--red); padding-left: 0.75rem; margin-bottom: 0.8rem;">Total Daily Usage</div>
-        <div style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.8rem; color: var(--ink);">{{ total_usage|floatformat:1 }} hrs</div>
+    <!-- Metrics Grid uses dynamic variables from your view context -->
+    <div class="metrics-grid">
+      <div class="card metric-card">
+        <div class="tag metric-tag">Total Daily Usage</div>
+        <div class="metric-value">{{ total_usage|floatformat:1 }} hrs</div>
       </div>
-      <div class="card" style="background: var(--paper2); padding: 1.5rem 2rem; border: 1px solid var(--border-ink);">
-        <div class="tag" style="font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted-ink); border-left: 3px solid var(--red); padding-left: 0.75rem; margin-bottom: 0.8rem;">Risk Ratio (Screen/Sleep)</div>
-        <div style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.8rem; color: var(--ink);">{{ risk_ratio|floatformat:2 }}</div>
+      <div class="card metric-card">
+        <div class="tag metric-tag">Risk Ratio (Screen/Sleep)</div>
+        <div class="metric-value">{{ risk_ratio|floatformat:2 }}</div>
       </div>
     </div>
 
-    <!-- Action Button -->
-    <div style="margin-top: 3.5rem;">
-      <a href="{% url 'checker:predict' %}" class="btn" style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; background: var(--paper2); color: var(--ink); border: 1px solid var(--border-ink); padding: 15px 30px; text-decoration: none; border-radius: 6px; transition: background 0.2s, box-shadow 0.2s;" onmouseover="this.style.background='#f0f0f0'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.background='var(--paper2)'; this.style.boxShadow='none'">
+    <div class="action-wrapper">
+      <!-- Fixed the href logic as well for dynamic URL generation -->
+      <a href="{% url 'checker:predict' %}" class="btn btn-check-another">
         Check Another User
       </a>
     </div>
