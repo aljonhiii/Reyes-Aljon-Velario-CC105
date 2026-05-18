@@ -24,7 +24,7 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 # -------------------------------------------------------------
 # Replace 'your-app-name' with your actual Render service name.
 # Include 'localhost' for local development.
-ALLOWED_HOSTS = ['reyes-aljon-velario-cc105.onrender.com/', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['reyes-aljon-velario-cc105.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
