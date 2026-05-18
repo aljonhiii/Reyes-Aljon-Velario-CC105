@@ -1,0 +1,360 @@
+{% extends 'checker/index.html' %}
+{% block title %}{{ project_name|default:"PhoneCheck" }} — {{ student_full_name|default:"Aljon Velario Reyes" }}{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap');
+
+  :root {
+    /* ── White/Light Theme Colors (High Contrast) ── */
+    --ink: #0a0808;           /* Near-black for primary text */
+    --paper: #d4cbcb;         /* Pure white background */
+    --paper2: #8b8787;        /* Faint off-white for cards/hover states */
+    
+    --red: #f5efee;           /* Stronger red for contrast on white */
+    --red-soft: #e74c3c;      /* Highlight red */
+    --muted-ink: #666666;     /* Dark grey for subdued text */
+    --border-ink: #1b1717;    /* Light grey for borders */
+    
+    /* Semantic Colors unchanged but verified for light BG */
+    --blue: #2980b9;
+    --gold: #f39c12;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased; /* Improve text rendering clarity */
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── top rule ── */
+  .top-rule {
+    width: 100%; height: 6px;
+    /* Using stark black/red/white for definition */
+    background: repeating-linear-gradient(90deg, #000 0 40px, var(--red) 40px 46px, #000 46px 86px, var(--paper) 86px 90px);
+  }
+
+  /* ── hero ── */
+  .hero {
+    max-width: 1100px; margin: 0 auto;
+    padding: 3.5rem 2rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--red); border-left: 3px solid var(--red); padding-left: 0.75rem;
+    margin-bottom: 1.2rem;
+    font-weight: 400;
+    opacity: 0; transform: translateX(-20px);
+    animation: slideIn 0.5s 0.1s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 800; line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--ink); /* High contrast */
+    opacity: 0; transform: translateY(30px);
+    animation: riseUp 0.6s 0.2s forwards;
+  }
+  .hero-title span.accent { color: var(--red); }
+  .hero-title span.thin   { font-weight: 400; color: var(--muted-ink); font-style: italic; }
+
+  .hero-sub {
+    margin-top: 1.5rem;
+    font-size: 0.88rem; /* Slightly larger for clarity */
+    line-height: 1.8;
+    color: #444444; /* Darker grey than muted-ink for body copy readability */
+    max-width: 550px;
+    opacity: 0; animation: fadeIn 0.5s 0.5s forwards;
+  }
+
+  .hero-cta {
+    margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+    opacity: 0; animation: fadeIn 0.5s 0.7s forwards;
+  }
+
+  .btn-primary {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    background: var(--ink); color: var(--paper); /* Dark button on white background */
+    padding: 15px 30px; border: none; cursor: pointer;
+    text-decoration: none; display: inline-block;
+    position: relative; overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+  }
+  .btn-primary::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--red);
+    transform: translateX(-101%); transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+  }
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .btn-primary span { position: relative; z-index: 1; transition: color 0.2s; }
+  /* Ensure text remains clear on hover when BG turns red */
+  .btn-primary:hover span { color: #ffffff; }
+
+  .btn-ghost {
+    font-family: 'DM Mono', monospace; font-size: 0.75rem; letter-spacing: 0.08em;
+    color: var(--muted-ink); background: none; border: none;
+    text-decoration: underline; text-underline-offset: 4px; cursor: pointer;
+    padding: 14px 4px; display: inline-block;
+    font-weight: 400;
+  }
+  .btn-ghost:hover { color: var(--ink); text-decoration-thickness: 2px; }
+
+  /* ── sidebar card ── */
+  .sidebar-card {
+    background: var(--paper); /* White card */
+    color: var(--ink);
+    border: 1px solid var(--border-ink);
+    padding: 2rem;
+    opacity: 0; transform: translateY(20px);
+    animation: riseUp 0.6s 0.4s forwards;
+    /* Added subtle shadow for depth on white BG */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  }
+  .sidebar-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted-ink); margin-bottom: 1.2rem;
+    font-weight: 400;
+  }
+  .sidebar-name {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 1.4rem; line-height: 1.15;
+    margin-bottom: 0.3rem;
+    color: var(--ink);
+  }
+  .sidebar-name .red { color: var(--red-soft); }
+  .sidebar-school {
+    font-size: 0.75rem; color: var(--muted-ink);
+    margin-bottom: 2rem;
+  }
+  .sidebar-divider { border: none; border-top: 1px solid var(--border-ink); margin: 1.2rem 0; }
+  
+  .sidebar-stat { margin-bottom: 1.2rem; }
+  .sidebar-stat-label { 
+    font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; 
+    color: var(--muted-ink); margin-bottom: 0.3rem; 
+  }
+  .sidebar-stat-val { 
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.3rem; 
+    color: var(--ink);
+  }
+  /* Adjusted stat colors for white background clarity */
+  .sidebar-stat-val.green { color: #16a085; } 
+  .sidebar-stat-val.yellow { color: #f39c12; }
+
+  /* ── model status pill ── */
+  .status-row {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.7rem; margin-top: 1.2rem;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot.green { 
+    background: #27ae60; 
+    box-shadow: 0 0 6px rgba(39, 174, 96, 0.5); 
+    animation: pulse 2s infinite; 
+  }
+  .dot.red   { background: var(--red-soft); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+  /* ── divider strip ── */
+  .strip {
+    max-width: 1100px; margin: 0 auto;
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 1.5rem;
+    opacity: 0; animation: fadeIn 0.5s 0.8s forwards;
+  }
+  .strip-line { flex: 1; height: 1px; background: var(--border-ink); }
+  .strip-label { 
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; 
+    color: var(--muted-ink); font-weight: 400;
+  }
+
+  /* ── feature grid ── */
+  .features {
+    max-width: 1100px; margin: 2rem auto 0;
+    padding: 0 2rem 4rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px; /* Creates the grid lines */
+    background: var(--border-ink); /* Line color */
+    border: 1px solid var(--border-ink);
+  }
+
+  .feature-cell {
+    background: var(--paper); padding: 2.5rem 2rem;
+    opacity: 0; transform: translateY(16px);
+    cursor: default;
+    transition: background 0.2s, transform 0.2s;
+  }
+  /* Subtle hover lift and shade */
+  .feature-cell:hover { 
+    background: var(--paper2); 
+    transform: translateY(-2px);
+    z-index: 1; /* Keep shadow above lines */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  }
+  
+  .feature-cell:nth-child(1) { animation: riseUp 0.5s 0.9s forwards; }
+  .feature-cell:nth-child(2) { animation: riseUp 0.5s 1.0s forwards; }
+  .feature-cell:nth-child(3) { animation: riseUp 0.5s 1.1s forwards; }
+
+  .feature-num {
+    font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800;
+    color: #f0f0f0; /* Very light grey numbers against white BG */
+    line-height: 1; margin-bottom: 1rem;
+    transition: color 0.2s;
+  }
+  .feature-cell:hover .feature-num { color: var(--red-soft); }
+
+  .feature-title {
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: 1rem; margin-bottom: 0.7rem; color: var(--ink);
+  }
+  .feature-desc {
+    font-size: 0.8rem; line-height: 1.7; color: #555555;
+  }
+
+  /* ── warning bar (Standard Light Alerts) ── */
+  .warn-bar {
+    max-width: 1100px; margin: 0 auto 1rem;
+    padding: 0 2rem;
+  }
+  .warn-inner {
+    /* Standard Bootstrap-style light warning colors for clarity */
+    background: #fff3cd; 
+    border: 1px solid #ffeeba;
+    padding: 1rem 1.25rem;
+    display: flex; align-items: center; gap: 0.8rem;
+    font-size: 0.8rem; color: #856404;
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+  }
+  .warn-inner code {
+    background: rgba(0,0,0,0.05);
+    padding: 2px 4px;
+    border-radius: 3px;
+    color: #b91c1c;
+  }
+
+  /* ── animations ── */
+  @keyframes slideIn  { to { opacity:1; transform: translateX(0); } }
+  @keyframes riseUp   { to { opacity:1; transform: translateY(0); } }
+  @keyframes fadeIn   { to { opacity:1; } }
+
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; gap: 2rem; padding-top: 2rem; }
+    .features { grid-template-columns: 1fr; gap: 1rem; background: none; border: none; padding-left: 0; padding-right: 0;}
+    .feature-cell { border: 1px solid var(--border-ink); }
+    .hero-title { font-size: 2.6rem; }
+    .btn-primary { width: 100%; text-align: center; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="top-rule"></div>
+
+{% if not model_loaded %}
+<div class="warn-bar" style="margin-top:1.5rem;">
+  <div class="warn-inner">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span>ML model failed to load — predictions are unavailable. Check that both <code>.pkl</code> files exist in <code>{{ model_path|default:"ml_models/" }}</code>.</span>
+  </div>
+</div>
+{% endif %}
+
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">{{ project_type|default:"Final Semester Project" }} · {{ university_acronym|default:"WMSU" }} · {{ project_year|default:"2026" }}</div>
+    <h1 class="hero-title">
+      {{ project_name_prefix|default:"SmartP" }}<span class="accent">{{ project_name_suffix|default:"Check" }}</span><br>
+      <span class="thin">by {{ student_first_name|default:"Aljon" }}</span>
+    </h1>
+    <p class="hero-sub">
+      {{ project_description|default:"A behavioral ML system that detects smartphone addiction risk — built as a capstone project. No demographics. No guesswork. Just your digital habits, run through a highly accurate Random Forest model trained on robust user data." }}
+    </p>
+    <div class="hero-cta">
+      <a href="{% url 'checker:predict' %}" class="btn-primary"><span>→ Run Analysis</span></a>
+      <a href="{% url 'checker:about' %}" class="btn-ghost">How it works</a>
+    </div>
+  </div>
+
+  <aside class="sidebar-card">
+    <div class="sidebar-label">{{ student_role|default:"Researcher" }}</div>
+    <div class="sidebar-name"><span class="red">{{ student_first_name|default:"Aljon" }}</span> {{ student_last_name|default:"Velario Reyes" }}</div>
+    <div class="sidebar-school">{{ student_course|default:"Associate in Computer Technology major in Application Development" }} · {{ university_acronym|default:"Western Mindanao State University" }}</div>
+    <hr class="sidebar-divider">
+    <div class="sidebar-stat">
+      <div class="sidebar-stat-label">Training Records</div>
+      <div class="sidebar-stat-val">{{ training_records|default:"7,500" }}</div>
+    </div>
+    <div class="sidebar-stat">
+      <div class="sidebar-stat-label">Model Accuracy</div>
+      <div class="sidebar-stat-val green">{{ model_accuracy|default:"93.87" }}%</div>
+    </div>
+    <div class="sidebar-stat">
+      <div class="sidebar-stat-label">ROC-AUC</div>
+      <div class="sidebar-stat-val yellow">{{ roc_auc_score|default:"0.964" }}</div>
+    </div>
+    <hr class="sidebar-divider">
+    <div class="status-row">
+      <div class="dot {% if model_loaded %}green{% else %}red{% endif %}"></div>
+      <span style="font-size:0.7rem; color: var(--muted-ink); font-weight:400;">
+        Model {% if model_loaded %}loaded & ready{% else %}not loaded{% endif %}
+      </span>
+    </div>
+  </aside>
+</div>
+
+<div class="strip">
+  <div class="strip-line"></div>
+  <span class="strip-label">How the system works</span>
+  <div class="strip-line"></div>
+</div>
+
+<div class="features">
+  {% if features %}
+    {% for feature in features %}
+    <div class="feature-cell">
+      <div class="feature-num">{{ forloop.counter|stringformat:"02d" }}</div>
+      <div class="feature-title">{{ feature.title }}</div>
+      <div class="feature-desc">{{ feature.description }}</div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <!-- Default Fallback Features if Context is Empty -->
+    <div class="feature-cell">
+      <div class="feature-num">01</div>
+      <div class="feature-title">Input Your Habits</div>
+      <div class="feature-desc">Enter seven behavioral metrics: daily screen time, social media, gaming, sleep, notifications, app opens, and weekend usage. No personal data needed.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="feature-num">02</div>
+      <div class="feature-title">Feature Engineering</div>
+      <div class="feature-desc">The system computes five composite indicators — risk ratio, habit intensity, weekend spike, total usage, and sleep ratio — that carry stronger predictive signal.</div>
+    </div>
+    <div class="feature-cell">
+      <div class="feature-num">03</div>
+      <div class="feature-title">RF Classification</div>
+      <div class="feature-desc">A tuned Random Forest (depth=5, 200 trees, balanced weights) predicts your addiction probability and assigns a Low / Moderate / High risk band.</div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

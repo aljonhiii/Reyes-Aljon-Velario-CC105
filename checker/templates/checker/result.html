@@ -1,0 +1,54 @@
+{% extends 'checker/index.html' %}
+
+{% block title %}Prediction Result — PhoneCheck{% endblock %}
+
+{% block content %}
+<div class="top-rule"></div>
+
+<div class="container fade-up" style="max-width: 700px; margin-top: 2rem; margin-bottom: 3rem;">
+  <div class="card" style="text-align: center; background: var(--paper); border: 1px solid var(--border-ink); padding: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+    
+    <h2 style="font-family: 'Syne', sans-serif; font-weight: 700; color: var(--ink); margin-bottom: 0.5rem; letter-spacing: -0.02em;">Your Addiction Risk Score</h2>
+
+    <!-- Very Large Conditional Score -->
+    <div style="font-family: 'Syne', sans-serif; font-size: 5rem; font-weight: 800; color: {% if risk_band == 'high' %}#c0392b{% elif risk_band == 'moderate' %}#f39c12{% else %}#27ae60{% endif %}; margin: 1.5rem 0; line-height: 1; letter-spacing: -0.04em;">
+      {{ risk_score|floatformat:1 }}%
+    </div>
+
+    <!-- Conditional Badge and Description -->
+    {% if addicted %}
+      <div class="badge badge-red" style="font-family: 'DM Mono', monospace; font-size: 1.1rem; padding: 12px 24px; margin-bottom: 1.5rem; background-color: #c0392b; color: white;">High Risk of Smartphone Addiction</div>
+      <p style="font-size: 0.95rem; line-height: 1.7; color: var(--muted-ink); margin-bottom: 2rem; max-width: 550px; margin-left: auto; margin-right: auto;">
+        Your usage patterns closely match those of users with clinically identified smartphone addiction. Consider reducing your screen time and evaluating your digital habits.
+      </p>
+    {% else %}
+      <div class="badge badge-green" style="font-family: 'DM Mono', monospace; font-size: 1.1rem; padding: 12px 24px; margin-bottom: 1.5rem; background-color: #27ae60; color: white;">Healthy Digital Habits</div>
+      <p style="font-size: 0.95rem; line-height: 1.7; color: var(--muted-ink); margin-bottom: 2rem; max-width: 550px; margin-left: auto; margin-right: auto;">
+        Your usage patterns fall within a healthy range compared to our dataset.
+      </p>
+    {% endif %}
+
+    <hr style="border: none; border-top: 1px solid var(--border-ink); margin: 2.5rem 0;">
+
+    <!-- Metrics Grid -->
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; text-align: left;">
+      <div class="card" style="background: var(--paper2); padding: 1.5rem 2rem; border: 1px solid var(--border-ink);">
+        <div class="tag" style="font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted-ink); border-left: 3px solid var(--red); padding-left: 0.75rem; margin-bottom: 0.8rem;">Total Daily Usage</div>
+        <div style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.8rem; color: var(--ink);">{{ total_usage|floatformat:1 }} hrs</div>
+      </div>
+      <div class="card" style="background: var(--paper2); padding: 1.5rem 2rem; border: 1px solid var(--border-ink);">
+        <div class="tag" style="font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted-ink); border-left: 3px solid var(--red); padding-left: 0.75rem; margin-bottom: 0.8rem;">Risk Ratio (Screen/Sleep)</div>
+        <div style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.8rem; color: var(--ink);">{{ risk_ratio|floatformat:2 }}</div>
+      </div>
+    </div>
+
+    <!-- Action Button -->
+    <div style="margin-top: 3.5rem;">
+      <a href="{% url 'checker:predict' %}" class="btn" style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; background: var(--paper2); color: var(--ink); border: 1px solid var(--border-ink); padding: 15px 30px; text-decoration: none; border-radius: 6px; transition: background 0.2s, box-shadow 0.2s;" onmouseover="this.style.background='#f0f0f0'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.background='var(--paper2)'; this.style.boxShadow='none'">
+        Check Another User
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

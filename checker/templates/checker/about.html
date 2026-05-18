@@ -1,0 +1,198 @@
+{% extends 'checker/index.html' %}
+
+{% block title %}Methodology — PhoneCheck{% endblock %}
+{% block nav_about %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap');
+
+  :root {
+    /* ── White/Light Theme Colors (High Contrast) ── */
+    --ink: #0a0808;           /* Near-black for primary text */
+    --paper: #d4cbcb;         /* Pure white background */
+    --paper2: #8b8787;        /* Faint off-white for cards/hover states */
+    
+    --red: #141414;           /* Stronger red for contrast on white */
+    --red-soft: #e74c3c;      /* Highlight red */
+    --muted-ink: #666666;     /* Dark grey for subdued text */
+    --border-ink: #1b1717;    /* Light grey for borders */
+    
+    /* Semantic Colors unchanged but verified for light BG */
+    --blue: #2980b9;
+    --gold: #f39c12;
+  }
+
+  /* Reset basic styles for block consistency if not in base */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* ── Top Rule (Consistent with Home) ── */
+  .top-rule {
+    width: 100%; height: 6px;
+    background: repeating-linear-gradient(90deg, #000 0 40px, var(--red) 40px 46px, #000 46px 86px, var(--paper) 86px 90px);
+  }
+
+  /* ── Main Container ── */
+  .methodology-container {
+    max-width: 900px; /* Slightly wider for grid symmetry */
+    margin: 0 auto;
+    padding: 3.5rem 2rem 5rem;
+  }
+
+  /* ── Page Header Styling ── */
+  .page-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--red); border-left: 3px solid var(--red); padding-left: 0.75rem;
+    margin-bottom: 1.2rem;
+    font-weight: 400;
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 800; line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 2rem;
+  }
+
+  .section-desc {
+    font-size: 0.88rem; line-height: 1.8;
+    color: #444444; max-width: 650px;
+    margin-bottom: 3.5rem;
+  }
+
+  /* ── Subheadings ── */
+  .sub-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 1.1rem;
+    color: var(--ink); text-transform: uppercase; letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sub-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border-ink);
+  }
+
+  /* ── Metrics Grid (Feature Style) ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px; /* Grid lines color comes from container BG */
+    background: var(--border-ink);
+    border: 1px solid var(--border-ink);
+    margin-bottom: 3rem;
+  }
+
+  .metric-card {
+    background: var(--paper);
+    padding: 2.2rem 2rem;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .metric-card:hover {
+    background: var(--paper2);
+    transform: translateY(-2px);
+    z-index: 1;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  }
+
+  .metric-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted-ink); margin-bottom: 0.8rem;
+    font-weight: 400;
+  }
+
+  .metric-val {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 2rem; line-height: 1;
+  }
+  
+  /* Metric specific colors for contrast on white */
+  .val-accuracy { color: var(--success-text); }
+  .val-f1       { color: var(--accent-text); }
+  .val-roc      { color: var(--gold-text); }
+
+  /* ── Keyframes from Home for Consistency ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-up {
+    opacity: 0;
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.3s; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .metrics-grid { 
+      grid-template-columns: 1fr; 
+      gap: 1rem; background: none; border: none; 
+    }
+    .metric-card { border: 1px solid var(--border-ink); }
+    .methodology-container { padding-top: 2rem; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="top-rule"></div>
+
+<div class="methodology-container fade-up">
+  
+  <!-- Header Section -->
+  <header style="margin-bottom: 4rem;">
+    <div class="page-eyebrow">Project Foundation</div>
+    <h1 class="page-title">Methodology &<br>Performance Metrics</h1>
+    <p class="section-desc">
+      This predictor utilizes a supervised machine learning approach, specifically a Random Forest Classifier, trained on synthesized behavioral patterns derived from a user base of 7,500 records.
+      <br><br>
+      To ensure objective analysis, the model intentionally excludes demographic data such as age or gender. Instead, it evaluates potential addiction risk exclusively through composite digital habits—including total usage intensity, sleep-to-screen ratios, application open frequency, and weekend usage spikes.
+    </p>
+  </header>
+
+  <!-- Metrics Section -->
+  <section class="fade-up delay-1">
+    <h3 class="sub-title">Model Performance</h3>
+    
+    <div class="metrics-grid">
+      
+      <!-- Accuracy Card -->
+      <div class="metric-card">
+        <div class="metric-label">Testing Accuracy</div>
+        <div class="metric-val val-accuracy">{{ metrics.accuracy|default:"N/A" }}</div>
+      </div>
+      
+      <!-- F1 Score Card -->
+      <div class="metric-card">
+        <div class="metric-label">F1 Score (Balanced)</div>
+        <div class="metric-val val-f1">{{ metrics.f1|default:"N/A" }}</div>
+      </div>
+      
+      <!-- ROC-AUC Card -->
+      <div class="metric-card">
+        <div class="metric-label">ROC-AUC Score</div>
+        <div class="metric-val val-roc">{{ metrics.roc_auc|default:"N/A" }}</div>
+      </div>
+      
+    </div>
+    
+    <p class="section-desc" style="font-size: 0.8rem; color: var(--muted-ink); margin-top: -1rem;">
+      * Metrics are based on the standard 80/20 train-test split applied to the dataset.
+    </p>
+  </section>
+
+</div>
+{% endblock %}

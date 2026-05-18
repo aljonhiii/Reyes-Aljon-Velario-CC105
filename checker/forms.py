@@ -8,7 +8,7 @@ class AddictionForm(forms.Form):
     notifications = forms.IntegerField(label="Daily Notifications")
     app_opens = forms.IntegerField(label="Daily App Opens")
     weekend_usage = forms.FloatField(
-    label="Total Weekend Usage", 
-    help_text="Enter total hours for Saturday and Sunday combined (e.g., 12.5)"
-)
+        label="Total Weekend Usage", 
+        help_text="Enter total hours for Saturday and Sunday combined (e.g., 12.5)"
+    )
     

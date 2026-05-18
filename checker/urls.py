@@ -1,7 +1,10 @@
 from django.urls import path
 from . import views
 
+app_name = 'checker'
+
 urlpatterns = [
-    # This maps the root of your app to the check_addiction view
-    path('', views.check_addiction, name='check_addiction'),
+    path('',        views.home,    name='home'),
+    path('predict/', views.predict, name='predict'),
+    path('about/',   views.about,   name='about'),
 ]

@@ -1,0 +1,87 @@
+{% extends 'checker/index.html' %}
+
+{% block title %}Predict — PhoneCheck{% endblock %}
+{% block nav_predict %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+  .form-group { margin-bottom: 1.5rem; }
+  .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text); }
+  .form-control { 
+    width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border); 
+    background: var(--surface); color: var(--text); font-family: var(--font-mono); 
+  }
+  .form-control:focus { outline: none; border-color: var(--accent); }
+  .btn { 
+    background: var(--accent); color: var(--bg); border: none; padding: 14px 24px; 
+    border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; 
+    font-family: var(--font-head); font-size: 1.1rem; transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.9; }
+  .btn:disabled { background: var(--muted); cursor: not-allowed; }
+  .error-text { color: var(--danger); font-size: 0.8rem; margin-top: 5px; display: block; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container fade-up" style="max-width: 600px; margin-top: 2rem; margin-bottom: 3rem;">
+  <div class="card">
+    <h2 style="color: var(--accent); margin-bottom: 1.5rem;">Enter Your Usage Stats</h2>
+
+    {% if model_error %}
+    <div class="badge badge-red" style="margin-bottom: 1.5rem; display: block; text-align: center;">
+      Machine learning model is currently unavailable. Predictions cannot be made.
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'checker:predict' %}">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="daily_screen_time_hours">Daily Screen Time (Hours, 0-24)</label>
+        <input type="number" step="0.1" name="daily_screen_time_hours" id="daily_screen_time_hours" class="form-control" value="{{ prev.daily_screen_time_hours|default:'' }}" required>
+        {% if errors.daily_screen_time_hours %}<span class="error-text">{{ errors.daily_screen_time_hours }}</span>{% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="social_media_hours">Social Media (Hours, 0-24)</label>
+        <input type="number" step="0.1" name="social_media_hours" id="social_media_hours" class="form-control" value="{{ prev.social_media_hours|default:'' }}" required>
+        {% if errors.social_media_hours %}<span class="error-text">{{ errors.social_media_hours }}</span>{% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="gaming_hours">Gaming (Hours, 0-24)</label>
+        <input type="number" step="0.1" name="gaming_hours" id="gaming_hours" class="form-control" value="{{ prev.gaming_hours|default:'' }}" required>
+        {% if errors.gaming_hours %}<span class="error-text">{{ errors.gaming_hours }}</span>{% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="sleep_hours">Sleep (Hours, 0-24)</label>
+        <input type="number" step="0.1" name="sleep_hours" id="sleep_hours" class="form-control" value="{{ prev.sleep_hours|default:'' }}" required>
+        {% if errors.sleep_hours %}<span class="error-text">{{ errors.sleep_hours }}</span>{% endif %}
+      </div>
+
+      <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <label for="notifications_per_day">Daily Notifications</label>
+          <input type="number" step="1" name="notifications_per_day" id="notifications_per_day" class="form-control" value="{{ prev.notifications_per_day|default:'' }}" required>
+          {% if errors.notifications_per_day %}<span class="error-text">{{ errors.notifications_per_day }}</span>{% endif %}
+        </div>
+        <div>
+          <label for="app_opens_per_day">Daily App Opens</label>
+          <input type="number" step="1" name="app_opens_per_day" id="app_opens_per_day" class="form-control" value="{{ prev.app_opens_per_day|default:'' }}" required>
+          {% if errors.app_opens_per_day %}<span class="error-text">{{ errors.app_opens_per_day }}</span>{% endif %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="weekend_screen_time">Weekend Screen Time (Total Hours, Sat + Sun)</label>
+        <input type="number" step="0.1" name="weekend_screen_time" id="weekend_screen_time" class="form-control" value="{{ prev.weekend_screen_time|default:'' }}" required>
+        {% if errors.weekend_screen_time %}<span class="error-text">{{ errors.weekend_screen_time }}</span>{% endif %}
+      </div>
+
+      <button type="submit" class="btn" {% if model_error %}disabled{% endif %}>Analyze Habits</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
